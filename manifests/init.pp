@@ -64,6 +64,7 @@ class ssh (
   $sshd_config_match                   = undef,
   $sshd_authorized_keys_command        = undef,
   $sshd_authorized_keys_command_user   = undef,
+  $sshd_config_trusted_user_ca_keys    = undef,
   $sshd_banner_content                 = undef,
   $sshd_banner_owner                   = 'root',
   $sshd_banner_group                   = 'root',
@@ -597,6 +598,10 @@ class ssh (
 
   if $sshd_authorized_keys_command_user != undef {
     validate_string($sshd_authorized_keys_command_user)
+  }
+
+  if $sshd_config_trusted_user_ca_keys != undef {
+    validate_absolute_path($sshd_config_trusted_user_ca_keys)
   }
 
   if $sshd_config_match != undef {

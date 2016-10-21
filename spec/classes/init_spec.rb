@@ -394,6 +394,7 @@ describe 'ssh' do
         :sshd_config_banner                => '/etc/sshd_banner',
         :sshd_authorized_keys_command      => '/path/to/command',
         :sshd_authorized_keys_command_user => 'asdf',
+        :sshd_config_trusted_user_ca_keys  => '/path/to/file',
         :sshd_banner_content               => 'textinbanner',
         :sshd_config_xauth_location        => '/opt/ssh/bin/xauth',
         :sshd_config_subsystem_sftp        => '/opt/ssh/bin/sftp',
@@ -502,6 +503,7 @@ describe 'ssh' do
     it { should_not contain_file('sshd_config').with_content(/^MaxSessions/) }
     it { should contain_file('sshd_config').with_content(/^AuthorizedKeysCommand \/path\/to\/command$/) }
     it { should contain_file('sshd_config').with_content(/^AuthorizedKeysCommandUser asdf$/) }
+    it { should contain_file('sshd_config').with_content(/^TrustedUserCAKeys \/path\/to\/file$/) }
     it { should contain_file('sshd_config').with_content(/^HostbasedAuthentication no$/) }
     it { should contain_file('sshd_config').with_content(/^PubkeyAuthentication no$/) }
     it { should contain_file('sshd_config').with_content(/^IgnoreUserKnownHosts no$/) }
@@ -1112,6 +1114,16 @@ describe 'ssh' do
       expect {
         should contain_class('ssh')
       }.to raise_error(Puppet::Error,/\["invalid", "type"\] is not a string/)
+    end
+  end
+
+  context 'with sshd_config_trusted_user_ca_keys specified with an invalid path' do
+    let(:params) { { :sshd_config_trusted_user_ca_keys => 'invalid/path' } }
+
+    it 'should fail' do
+      expect {
+        should contain_class('ssh')
+      }.to raise_error(Puppet::Error,/"invalid\/path" is not an absolute path/)
     end
   end
 
